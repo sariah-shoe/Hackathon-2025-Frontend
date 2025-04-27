@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -13,7 +14,7 @@ class ApiService {
   ApiService._internal();
   
   final TokenService _tokenService = TokenService();
-  final String _baseUrl = 'https://teaching-neutral-rattler.ngrok-free.app/api';
+  static final String baseUrl = kReleaseMode ? '' : 'http://127.0.0.1:8000/api';
   
   // Function to refresh the token
   Future<bool> refreshToken() async {
@@ -22,8 +23,10 @@ class ApiService {
     
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/auth/token/refresh/'),
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        Uri.parse('$baseUrl/auth/token/refresh/'),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
         body: jsonEncode({'refresh': refreshToken}),
       );
       
@@ -54,17 +57,18 @@ class ApiService {
   // Add authorization header to request
   Future<Map<String, String>> _getAuthHeaders() async {
     final accessToken = await _tokenService.getAccessToken();
-    return {
-      HttpHeaders.contentTypeHeader: 'application/json',
-      if (accessToken != null) HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+    final headers = {
+      'content-type': 'application/json',
+      if (accessToken != null) 'authorization': 'Bearer $accessToken',
     };
+    return headers;
   }
   
   // GET request with authentication
   Future<http.Response> get(String endpoint) async {
     final headers = await _getAuthHeaders();
     final response = await http.get(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('$baseUrl/$endpoint'),
       headers: headers,
     );
     
@@ -75,7 +79,7 @@ class ApiService {
         // Retry with new token
         final newHeaders = await _getAuthHeaders();
         return http.get(
-          Uri.parse('$_baseUrl/$endpoint'),
+          Uri.parse('$baseUrl/$endpoint'),
           headers: newHeaders,
         );
       }
@@ -88,7 +92,7 @@ class ApiService {
   Future<http.Response> post(String endpoint, dynamic body) async {
     final headers = await _getAuthHeaders();
     final response = await http.post(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('$baseUrl/$endpoint'),
       headers: headers,
       body: jsonEncode(body),
     );
@@ -100,7 +104,7 @@ class ApiService {
         // Retry with new token
         final newHeaders = await _getAuthHeaders();
         return http.post(
-          Uri.parse('$_baseUrl/$endpoint'),
+          Uri.parse('$baseUrl/$endpoint'),
           headers: newHeaders,
           body: jsonEncode(body),
         );
@@ -114,7 +118,7 @@ class ApiService {
   Future<http.Response> put(String endpoint, dynamic body) async {
     final headers = await _getAuthHeaders();
     final response = await http.put(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('$baseUrl/$endpoint'),
       headers: headers,
       body: jsonEncode(body),
     );
@@ -124,7 +128,7 @@ class ApiService {
       if (refreshed) {
         final newHeaders = await _getAuthHeaders();
         return http.put(
-          Uri.parse('$_baseUrl/$endpoint'),
+          Uri.parse('$baseUrl/$endpoint'),
           headers: newHeaders,
           body: jsonEncode(body),
         );
@@ -137,7 +141,7 @@ class ApiService {
   Future<http.Response> delete(String endpoint) async {
     final headers = await _getAuthHeaders();
     final response = await http.delete(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('$baseUrl/$endpoint'),
       headers: headers,
     );
     
@@ -146,7 +150,7 @@ class ApiService {
       if (refreshed) {
         final newHeaders = await _getAuthHeaders();
         return http.delete(
-          Uri.parse('$_baseUrl/$endpoint'),
+          Uri.parse('$baseUrl/$endpoint'),
           headers: newHeaders,
         );
       }

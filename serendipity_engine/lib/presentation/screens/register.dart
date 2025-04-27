@@ -1,39 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:serendipity_engine/services/api_service.dart';
+import 'package:serendipity_engine/services/token_service.dart';
+import 'package:serendipity_engine/presentation/screens/login.dart';
+import 'package:serendipity_engine/presentation/screens/home/home.dart';
 
-// Assuming these screens exist and are designed to be part of the flow
+// Import the actual screens
 import 'create_account.dart'; // Step 1: Email/Password
-import 'ptest.dart'; // Step 2: Personality Test (Placeholder)
-
-// Placeholder for a screen - replace with actual PTest screen later
-class PersonalityTestScreen extends StatelessWidget {
-  final Function(Map<String, dynamic> data) onDataChanged;
-  final Function(bool isValid) onValidityChanged;
-
-  const PersonalityTestScreen({
-    super.key,
-    required this.onDataChanged,
-    required this.onValidityChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Simulate validity change after a delay
-    Future.delayed(const Duration(seconds: 1), () => onValidityChanged(true));
-    // Simulate data change
-    Future.delayed(
-      const Duration(seconds: 1),
-      () => onDataChanged({
-        'personality_answers': [
-          {'question_id': 1, 'answer_score': 3},
-        ],
-      }),
-    );
-
-    return const Center(child: Text('Personality Test Screen (Placeholder)'));
-  }
-}
+import 'ptest.dart'; // Step 2: Personality Test
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -46,7 +21,6 @@ class _RegisterState extends State<Register> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
   final Map<String, dynamic> _registrationData = {};
-  // Tracks if the *current* page's inputs are valid for proceeding
   bool _isCurrentPageValid = false;
 
   // Define the registration steps/screens
@@ -133,22 +107,15 @@ class _RegisterState extends State<Register> {
 
   Future<void> _submitRegistration() async {
     print("Submitting Registration Data: $_registrationData");
-    final messenger = ScaffoldMessenger.of(
-      context,
-    ); // Store for use after async gap
+    final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(const SnackBar(content: Text('Registering...')));
 
-    // **TODO:** Replace with your actual API base URL
-    final url = Uri.parse(
-      'https://teaching-neutral-rattler.ngrok-free.app/api/onboarding/',
-    ); // Example local URL
+    final apiBaseUrl = ApiService.baseUrl;
+    final url = Uri.parse('$apiBaseUrl/onboarding/');
 
     try {
       http.Response response;
-      final String? imagePath = _registrationData.remove(
-        'image_path',
-      ); // Remove path from data map
-
+      final String? imagePath = _registrationData.remove('image_path');
       // Use Multipart request if image exists
       if (imagePath != null && imagePath.isNotEmpty) {
         var request = http.MultipartRequest('POST', url);
@@ -196,18 +163,48 @@ class _RegisterState extends State<Register> {
         );
       }
 
-      messenger.hideCurrentSnackBar(); // Hide loading indicator
+      messenger.hideCurrentSnackBar();
 
       if (response.statusCode == 201) {
         print('Registration Successful: ${response.body}');
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text('Registration Successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Navigate to Login or Home screen
-        // Navigator.of(context).pushReplacementNamed('/login'); // Example
+
+        // Parse the response
+        final responseData = jsonDecode(response.body);
+
+        // Check if tokens are in the response
+        if (responseData.containsKey('tokens')) {
+          // Use your existing TokenService to store tokens
+          final tokenService = TokenService();
+          await tokenService.saveTokens(
+            accessToken: responseData['tokens']['access'],
+            refreshToken: responseData['tokens']['refresh'],
+          );
+
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text('Registration Successful! You are now logged in.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to Home screen directly
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+        } else {
+          // Fallback if tokens are missing - navigate to login
+          messenger.showSnackBar(
+            const SnackBar(
+              content: Text('Registration Successful! Please log in.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+          );
+        }
       } else {
         print('Registration Failed: ${response.statusCode} ${response.body}');
         String errorMessage = 'Registration failed (${response.statusCode}).';
@@ -259,7 +256,6 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     final pages = _registrationPages; // Get pages with current data
@@ -335,5 +331,3 @@ class _RegisterState extends State<Register> {
     );
   }
 }
-
-// --- Mock screens removed, using actual imported screens ---

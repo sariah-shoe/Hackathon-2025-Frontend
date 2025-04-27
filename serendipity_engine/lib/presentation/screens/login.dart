@@ -5,6 +5,7 @@ import 'package:serendipity_engine/presentation/screens/home/home.dart';
 import 'package:serendipity_engine/presentation/screens/register.dart';
 import 'package:http/http.dart' as http;
 import 'package:serendipity_engine/services/token_service.dart';
+import 'package:serendipity_engine/services/api_service.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -32,15 +33,19 @@ class LoginState extends State<Login> {
     super.dispose();
   }
 
+  final apiBaseUrl = ApiService.baseUrl;
+
   // Login function that uses token service
   // Login function that uses token service and logs errors to console
   Future<Map<String, dynamic>> _login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse(
-          'https://teaching-neutral-rattler.ngrok-free.app/api/auth/token/',
+          '$apiBaseUrl/auth/token/',
         ),
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
         body: jsonEncode({'email': email, 'password': password}),
       );
 
