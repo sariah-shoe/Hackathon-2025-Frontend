@@ -255,7 +255,7 @@ class _LandingPageState extends State<LandingPage>
                                 ),
                                 SizedBox(height: constraints.maxHeight * 0.02),
                                 Text(
-                                  'Branch Out, Make Connections, Meet People',
+                                  'Branch Out. Make Connections. Meet People.',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontSize: min(
