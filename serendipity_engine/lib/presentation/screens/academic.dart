@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'ptest.dart';
 
-class academic extends StatelessWidget {
-  const academic({super.key});
+class Academic extends StatelessWidget {
+  const Academic({super.key});
 
   @override
   Widget build(BuildContext context) {
