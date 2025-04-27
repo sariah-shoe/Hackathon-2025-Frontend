@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:serendipity_engine/presentation/screens/home/home.dart';
 
 // Define a custom Form widget.
 class Login extends StatefulWidget {

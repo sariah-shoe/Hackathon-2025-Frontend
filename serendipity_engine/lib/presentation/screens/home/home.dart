@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'current_matches.dart';
-import 'past_matches.dart';
-import 'my_profile.dart';
+//import 'current_matches.dart';
+//import 'past_matches.dart';
+//import 'my_profile.dart';
 
 
 class Home extends StatefulWidget {
@@ -13,9 +13,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentPage = 0;
   List<Widget> pages = [
-    CurrentMatches(),
-    PastMatches(),
-    MyProfile()
+    Center(child: Text('Home')),
+    Center(child: Text('History')),
+    Center(child: Text('Profile')),
   ];
 
   @override

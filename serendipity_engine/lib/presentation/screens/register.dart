@@ -23,11 +23,11 @@ class Register extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push
-              }
-              )
+//            ElevatedButton(
+//              onPressed: () {
+//                Navigator.push
+//              }
+//              )
           ],
         ),
       ),
