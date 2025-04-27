@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'current_matches.dart';
+import 'past_matches.dart';
+import 'my_profile.dart';
+
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -8,10 +12,16 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentPage = 0;
+  List<Widget> pages = [
+    CurrentMatches(),
+    PastMatches(),
+    MyProfile()
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: pages[currentPage],
       bottomNavigationBar: NavigationBar(destinations: [
         NavigationDestination(icon: Icon(Icons.home), label: "Homepage"),
         NavigationDestination(icon: Icon(Icons.waving_hand_outlined), label: "Past Connections"),
