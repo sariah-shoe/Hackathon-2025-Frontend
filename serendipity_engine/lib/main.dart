@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:serendipity_engine/presentation/screens/landing_page.dart';
 
 void main() {

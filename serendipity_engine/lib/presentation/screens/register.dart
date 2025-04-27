@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'academic.dart';
 import 'create_account.dart';
 
-
-
 class Register extends StatelessWidget {
   const Register({super.key});
 
@@ -18,18 +16,15 @@ class Register extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push
-              }
-              )
-          ],
-        ),
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: 'Personal Info'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Academics'),
+          NavigationDestination(
+            icon: Icon(Icons.person),
+            label: 'Personality Test',
+          ),
+        ],
       ),
     );
   }
