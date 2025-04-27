@@ -95,7 +95,6 @@ class _MyProfileState extends State<MyProfile> {
     try {
       final updatedData = {
         'name': _nameController.text,
-        'bio': _bioController.text,
         'major': _majorController.text,
         'minor': _minorController.text,
       };
@@ -232,8 +231,6 @@ class _MyProfileState extends State<MyProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoSection('About Me', _userData['bio'] ?? 'No bio added yet'),
-            const Divider(),
             _buildInfoSection('Major', _userData['major'] ?? 'Not specified'),
             const Divider(),
             _buildInfoSection('Minor', _userData['minor'] ?? 'Not specified'),
@@ -335,16 +332,6 @@ class _MyProfileState extends State<MyProfile> {
               }
               return null;
             },
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _bioController,
-            decoration: const InputDecoration(
-              labelText: 'About Me',
-              border: OutlineInputBorder(),
-              alignLabelWithHint: true,
-            ),
-            maxLines: 4,
           ),
           const SizedBox(height: 16),
           TextFormField(

@@ -125,31 +125,6 @@ class _CurrentMatchesState extends State<CurrentMatches> {
     }
   }
 
-  Future<void> _sendConnectionRequest(int userId) async {
-    try {
-      final response = await _apiService.post('connections/request/', {
-        'user_id': userId,
-      });
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Connection request sent')),
-        );
-        // Refresh suggested connections
-        _loadSuggestedConnections();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to send connection request')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-      print('Error: ${e.toString()}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,7 +149,7 @@ class _CurrentMatchesState extends State<CurrentMatches> {
                       children: [
                         _buildPendingConnectionsSection(),
                         const SizedBox(height: 24),
-                        _buildSuggestedConnectionsSection(),
+                        //_buildSuggestedConnectionsSection(),
                       ],
                     ),
                   ),
@@ -188,7 +163,7 @@ class _CurrentMatchesState extends State<CurrentMatches> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Pending Requests',
+          'Nearby',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -198,7 +173,7 @@ class _CurrentMatchesState extends State<CurrentMatches> {
                 padding: EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
-                    'No pending connection requests',
+                    'No nearby connections',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -241,84 +216,6 @@ class _CurrentMatchesState extends State<CurrentMatches> {
                           onPressed: () => _rejectConnection(connection['id']),
                         ),
                       ],
-                    ),
-                    onTap: () {
-                      // Show user profile details
-                      // This would be implemented separately
-                    },
-                  ),
-                );
-              },
-            ),
-      ],
-    );
-  }
-
-  Widget _buildSuggestedConnectionsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Suggested Connections',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        _suggestedConnections.isEmpty
-            ? const Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text(
-                    'No suggestions available at the moment',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ),
-            )
-            : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _suggestedConnections.length,
-              itemBuilder: (context, index) {
-                final suggestion = _suggestedConnections[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage:
-                          suggestion['profile_image'] != null
-                              ? NetworkImage(suggestion['profile_image'])
-                              : null,
-                      child:
-                          suggestion['profile_image'] == null
-                              ? Text(suggestion['name'][0])
-                              : null,
-                    ),
-                    title: Text(suggestion['name'] ?? 'User'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          suggestion['major'] ?? 'No major specified',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (suggestion['common_interests'] != null &&
-                            suggestion['common_interests'].isNotEmpty)
-                          Text(
-                            'Common interests: ${suggestion['common_interests'].join(', ')}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.person_add),
-                      onPressed: () => _sendConnectionRequest(suggestion['id']),
                     ),
                     onTap: () {
                       // Show user profile details
