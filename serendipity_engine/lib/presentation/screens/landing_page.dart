@@ -12,11 +12,18 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
+  // Random number generator for pin positions
+  final Random _random = Random();
+
+  // Animation controllers for repeating pin animations
+  final List<AnimationController> _pinAnimControllers = [];
+
+  // Modify the initState method to initialize pin positions early
   @override
   void initState() {
     super.initState();
@@ -42,13 +49,86 @@ class _LandingPageState extends State<LandingPage>
       ),
     );
 
+    // Pre-calculate fixed pin positions
+    _calculatePinPositions();
+
+    // Create animation controllers for the pins
+    for (int i = 0; i < 4; i++) {
+      final controller = AnimationController(
+        duration: Duration(seconds: 4 + i),
+        vsync: this,
+      );
+      controller.repeat(reverse: false);
+      _pinAnimControllers.add(controller);
+    }
+
     _controller.forward();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  // List to store fixed pin positions
+  final List<Offset> _pinPositions = [];
+
+  // Calculate fixed positions for pins in a way that ensures proper spacing
+  void _calculatePinPositions() {
+    // Define fixed positions that ensure pins are well-spaced
+    // These are relative positions within the normalized -1 to 1 range
+    _pinPositions.add(Offset(1.0, -0.4));
+    _pinPositions.add(Offset(-0.3, -0.7));
+    _pinPositions.add(Offset(-0.9, 0.0)); 
+    _pinPositions.add(Offset(0.4, -0.1)); 
+  }
+
+  // Modified pin building method that uses fixed positions
+  Widget _buildAnimatedPin(
+    String imagePath,
+    Size ellipseSize,
+    double pinSize,
+    int index,
+  ) {
+    // Get the pre-calculated position for this pin
+    final normalizedPosition = _pinPositions[index];
+
+    // Scale the normalized position to the actual ellipse size, accounting for pin size
+    final position = Offset(
+      normalizedPosition.dx * (ellipseSize.width - pinSize) / 2.5,
+      normalizedPosition.dy * (ellipseSize.height - pinSize) / 2.5,
+    );
+
+    // Calculate center position offset
+    final centerOffset = Offset(
+      ellipseSize.width / 2 - pinSize / 2,
+      ellipseSize.height / 2 - pinSize / 2,
+    );
+
+    return Positioned(
+      left: centerOffset.dx + position.dx,
+      top: centerOffset.dy + position.dy,
+      child: AnimatedBuilder(
+        animation: _pinAnimControllers[index],
+        builder: (context, child) {
+          // Use a complete sine wave for both horizontal and vertical movement
+          final value = _pinAnimControllers[index].value;
+
+          // Create movements with different frequencies to make it look more natural
+          // Ensure the sine waves complete full cycles
+          final wiggleY = sin(value * 2 * pi) * 3.0;
+
+          // Use a different frequency for horizontal movement
+          final wiggleX = sin(value * 2 * pi + (index * pi / 2)) * 2.0;
+
+          return Transform.translate(
+            offset: Offset(wiggleX, wiggleY),
+            child: child,
+          );
+        },
+        child: Image.asset(
+          imagePath,
+          width: pinSize,
+          height: pinSize,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
   }
 
   @override
@@ -73,7 +153,12 @@ class _LandingPageState extends State<LandingPage>
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final maxWidth = constraints.maxWidth;
-                  final contentWidth = maxWidth * 0.85;
+                  final contentWidth = maxWidth * 1; // full width for now
+
+                  // Size for the circle and pins
+                  final circleSize = Size(contentWidth * 1, contentWidth * 0.8);
+                  final pinSize = circleSize.width * 0.3;
+
                   return Center(
                     child: Container(
                       width: contentWidth,
@@ -88,24 +173,51 @@ class _LandingPageState extends State<LandingPage>
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TweenAnimationBuilder(
-                                  tween: Tween<double>(begin: 0, end: 1),
-                                  duration: const Duration(seconds: 2),
-                                  builder: (context, double value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(
-                                        0,
-                                        sin(value * 2 * 3.14159) * 4,
+                                // Circular area with pins
+                                SizedBox(
+                                  width: circleSize.width,
+                                  height: circleSize.height,
+                                  child: Stack(
+                                    children: [
+                                      // Circle/ellipse background
+                                      Center(
+                                        child: Image.asset(
+                                          'assets/images/landing_circle_small.png',
+                                          width: circleSize.width,
+                                          height: circleSize.height,
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
-                                      child: child,
-                                    );
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/logo.png',
-                                    height: constraints.maxHeight * 0.35,
-                                    fit: BoxFit.contain,
+
+                                      // Animated pins with repeating animations
+                                      _buildAnimatedPin(
+                                        'assets/images/landing_man1_small.png',
+                                        circleSize,
+                                        pinSize,
+                                        0,
+                                      ),
+                                      _buildAnimatedPin(
+                                        'assets/images/landing_woman1_small.png',
+                                        circleSize,
+                                        pinSize,
+                                        1,
+                                      ),
+                                      _buildAnimatedPin(
+                                        'assets/images/landing_man2_small.png',
+                                        circleSize,
+                                        pinSize,
+                                        2,
+                                      ),
+                                      _buildAnimatedPin(
+                                        'assets/images/landing_woman2_small.png',
+                                        circleSize,
+                                        pinSize,
+                                        3,
+                                      ),
+                                    ],
                                   ),
                                 ),
+
                                 SizedBox(height: constraints.maxHeight * 0.04),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

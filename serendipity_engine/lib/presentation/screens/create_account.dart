@@ -68,7 +68,10 @@ class _DynamicTextListInputState extends State<DynamicTextListInput> {
                 decoration: InputDecoration(
                   hintText: 'Type and press Add',
                   border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 onFieldSubmitted: (_) => _addItem(),
               ),
@@ -76,7 +79,9 @@ class _DynamicTextListInputState extends State<DynamicTextListInput> {
             const SizedBox(width: 8),
             ElevatedButton(
               onPressed: _addItem,
-              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 16)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
               child: const Text('Add'),
             ),
           ],
@@ -86,11 +91,16 @@ class _DynamicTextListInputState extends State<DynamicTextListInput> {
           Wrap(
             spacing: 8.0,
             runSpacing: 4.0,
-            children: _items.map((item) => Chip(
-              label: Text(item),
-              onDeleted: () => _removeItem(item),
-              deleteIconColor: Colors.red.shade700,
-            )).toList(),
+            children:
+                _items
+                    .map(
+                      (item) => Chip(
+                        label: Text(item),
+                        onDeleted: () => _removeItem(item),
+                        deleteIconColor: Colors.red.shade700,
+                      ),
+                    )
+                    .toList(),
           ),
         const SizedBox(height: 15),
       ],
@@ -125,7 +135,9 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
   @override
   void initState() {
     super.initState();
-    _courses = List<Map<String, String>>.from(widget.initialItems.map((item) => Map<String, String>.from(item)));
+    _courses = List<Map<String, String>>.from(
+      widget.initialItems.map((item) => Map<String, String>.from(item)),
+    );
   }
 
   @override
@@ -137,7 +149,8 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
   }
 
   void _addCourse() {
-    if (_formKey.currentState!.validate()) { // Validate the input fields
+    if (_formKey.currentState!.validate()) {
+      // Validate the input fields
       final name = _nameController.text.trim();
       final number = _numberController.text.trim();
       final department = _departmentController.text.trim();
@@ -172,14 +185,22 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
       children: [
         Text(widget.label, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Form( // Wrap input fields in a Form for validation
+        Form(
+          // Wrap input fields in a Form for validation
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Course Name', border: OutlineInputBorder()),
-                validator: (value) => (value == null || value.trim().isEmpty) ? 'Name required' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Course Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator:
+                    (value) =>
+                        (value == null || value.trim().isEmpty)
+                            ? 'Name required'
+                            : null,
               ),
               const SizedBox(height: 8),
               Row(
@@ -187,16 +208,30 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
                   Expanded(
                     child: TextFormField(
                       controller: _numberController,
-                      decoration: const InputDecoration(labelText: 'Course Number', border: OutlineInputBorder()),
-                      validator: (value) => (value == null || value.trim().isEmpty) ? 'Number required' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Course Number',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator:
+                          (value) =>
+                              (value == null || value.trim().isEmpty)
+                                  ? 'Number required'
+                                  : null,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextFormField(
                       controller: _departmentController,
-                      decoration: const InputDecoration(labelText: 'Department', border: OutlineInputBorder()),
-                      validator: (value) => (value == null || value.trim().isEmpty) ? 'Department required' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Department',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator:
+                          (value) =>
+                              (value == null || value.trim().isEmpty)
+                                  ? 'Department required'
+                                  : null,
                     ),
                   ),
                 ],
@@ -217,11 +252,13 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
         if (_courses.isNotEmpty)
           ListView.builder(
             shrinkWrap: true, // Important inside SingleChildScrollView
-            physics: const NeverScrollableScrollPhysics(), // Disable scrolling within the list
+            physics:
+                const NeverScrollableScrollPhysics(), // Disable scrolling within the list
             itemCount: _courses.length,
             itemBuilder: (context, index) {
               final course = _courses[index];
-              return Card( // Use Card for better visual separation
+              return Card(
+                // Use Card for better visual separation
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ListTile(
                   title: Text('${course['name']} (${course['number']})'),
@@ -243,15 +280,16 @@ class _DynamicCourseListInputState extends State<DynamicCourseListInput> {
 }
 // --- End of New Widget ---
 
-
 class CreateAccountScreen extends StatefulWidget {
   final Function(Map<String, dynamic> data) onDataChanged;
   final Function(bool isValid) onValidityChanged;
+  final Map<String, dynamic>? initialData; // Add this parameter
 
   const CreateAccountScreen({
     super.key,
     required this.onDataChanged,
     required this.onValidityChanged,
+    this.initialData, // Make it optional
   });
 
   @override
@@ -276,7 +314,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _socialsPhoneController = TextEditingController();
   final _socialsOtherController = TextEditingController();
 
-
   // State variables
   XFile? _imageFile;
   String? _yearInSchool;
@@ -287,6 +324,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   List<Map<String, String>> _coursesTaking = [];
   List<Map<String, String>> _favoriteCourses = [];
 
+  final Map<String, String> _yearMappings = {
+    'FR': 'Freshman',
+    'SO': 'Sophomore',
+    'JR': 'Junior',
+    'SR': 'Senior',
+    'GR': 'Graduate',
+    'OT': 'Other',
+  };
+
   final List<String> _yearOptions = ['FR', 'SO', 'JR', 'SR', 'GR', 'OT'];
 
   bool _lastKnownValidity = false;
@@ -294,11 +340,58 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Populate fields from initial data if available
+    if (widget.initialData != null) {
+      // Basic fields
+      _emailController.text = widget.initialData!['email'] ?? '';
+      _passwordController.text = widget.initialData!['password'] ?? '';
+      _firstNameController.text = widget.initialData!['first_name'] ?? '';
+      _lastNameController.text = widget.initialData!['last_name'] ?? '';
+      _preferredNameController.text =
+          widget.initialData!['preferred_name'] ?? '';
+
+      // Year in school
+      _yearInSchool = widget.initialData!['year_in_school'] as String?;
+
+      // Lists
+      _majors = List<String>.from(widget.initialData!['majors'] ?? []);
+      _minors = List<String>.from(widget.initialData!['minors'] ?? []);
+      _interests = List<String>.from(widget.initialData!['interests'] ?? []);
+      _activities = List<String>.from(widget.initialData!['activities'] ?? []);
+
+      // Courses
+      if (widget.initialData!['courses_taking'] != null) {
+        _coursesTaking =
+            (widget.initialData!['courses_taking'] as List)
+                .map((item) => Map<String, String>.from(item as Map))
+                .toList();
+      }
+
+      if (widget.initialData!['favorite_courses'] != null) {
+        _favoriteCourses =
+            (widget.initialData!['favorite_courses'] as List)
+                .map((item) => Map<String, String>.from(item as Map))
+                .toList();
+      }
+
+      // Social media fields
+      final socials =
+          widget.initialData!['socials'] as Map<String, dynamic>? ?? {};
+      _socialsSnapchatController.text = socials['snapchat'] ?? '';
+      _socialsInstagramController.text = socials['instagram'] ?? '';
+      _socialsFacebookController.text = socials['facebook'] ?? '';
+      _socialsXController.text = socials['x'] ?? '';
+      _socialsDiscordController.text = socials['discord'] ?? '';
+      _socialsPhoneController.text = socials['phone'] ?? '';
+      _socialsOtherController.text = socials['other'] ?? '';
+    }
+
+    // Add listeners after setting initial values
     _emailController.addListener(_checkValidity);
     _passwordController.addListener(_checkValidity);
-    // Add listeners for optional fields that just trigger data updates
-    _firstNameController.addListener(_sendDataUpdate);
-    _lastNameController.addListener(_sendDataUpdate);
+    _firstNameController.addListener(_checkValidity);
+    _lastNameController.addListener(_checkValidity);
     _preferredNameController.addListener(_sendDataUpdate);
     _socialsSnapchatController.addListener(_sendDataUpdate);
     _socialsInstagramController.addListener(_sendDataUpdate);
@@ -308,6 +401,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _socialsPhoneController.addListener(_sendDataUpdate);
     _socialsOtherController.addListener(_sendDataUpdate);
 
+    // Delay validity check until after build to ensure form is properly initialized
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkValidity());
   }
 
@@ -331,8 +425,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _checkValidity() {
     final formValid = _formKey.currentState?.validate() ?? false;
-    final imageValid = _imageFile != null;
-    final currentValidity = formValid && imageValid;
+    // final imageValid = _imageFile != null;
+    // final currentValidity = formValid && imageValid;
+    final currentValidity = formValid;
 
     if (_lastKnownValidity != currentValidity) {
       widget.onValidityChanged(currentValidity);
@@ -364,7 +459,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     if (_socialsPhoneController.text.trim().isNotEmpty) {
       socialsMap['phone'] = _socialsPhoneController.text.trim();
     }
-     if (_socialsOtherController.text.trim().isNotEmpty) {
+    if (_socialsOtherController.text.trim().isNotEmpty) {
       socialsMap['other'] = _socialsOtherController.text.trim();
     }
 
@@ -386,11 +481,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     });
   }
 
-
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     try {
-      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
       if (pickedFile != null) {
         setState(() {
           _imageFile = pickedFile;
@@ -400,12 +496,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       }
     } catch (e) {
       print("Image picker error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -414,14 +509,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
-          // Use autovalidateMode to provide feedback as user types (optional)
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
                 'Tell Us About Yourself',
-                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.amber),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
@@ -429,11 +527,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               // --- Account Credentials (Required) ---
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email *', border: OutlineInputBorder(), prefixIcon: Icon(Icons.email)),
+                decoration: const InputDecoration(
+                  labelText: 'Email *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) return 'Email is required';
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) return 'Enter a valid email';
+                  if (value == null || value.trim().isEmpty)
+                    return 'Email is required';
+                  if (!RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  ).hasMatch(value.trim()))
+                    return 'Enter a valid email';
                   return null;
                 },
                 // onChanged: (_) => _checkValidity(), // Use listener instead
@@ -441,11 +547,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               const SizedBox(height: 15),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password *', border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock)),
+                decoration: const InputDecoration(
+                  labelText: 'Password *',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
                 obscureText: true,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return 'Password is required';
-                  if (value.length < 8) return 'Password must be at least 8 characters';
+                  if (value == null || value.isEmpty)
+                    return 'Password is required';
+                  if (value.length < 8)
+                    return 'Password must be at least 8 characters';
                   return null;
                 },
                 // onChanged: (_) => _checkValidity(), // Use listener instead
@@ -453,29 +565,54 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               const SizedBox(height: 25),
 
               // --- Basic Info (Optional) ---
-               const Divider(),
-               const SizedBox(height: 15),
-               Text('Basic Info (Optional)', style: Theme.of(context).textTheme.headlineSmall),
-               const SizedBox(height: 15),
+              const Divider(),
+              const SizedBox(height: 15),
+              Text(
+                'Basic Info',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 15),
               TextFormField(
                 controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'First Name', border: OutlineInputBorder(), prefixIcon: Icon(Icons.person)),
+                decoration: const InputDecoration(
+                  labelText:
+                      'First Name *', // Added asterisk to indicate required
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
                 keyboardType: TextInputType.name,
-                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty)
+                    return 'First name is required';
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
               TextFormField(
                 controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Last Name', border: OutlineInputBorder(), prefixIcon: Icon(Icons.person_outline)),
+                decoration: const InputDecoration(
+                  labelText:
+                      'Last Name *', // Added asterisk to indicate required
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
                 keyboardType: TextInputType.name,
-                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty)
+                    return 'Last name is required';
+                  return null;
+                },
               ),
-               const SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextFormField(
                 controller: _preferredNameController,
-                decoration: const InputDecoration(labelText: 'Preferred Name', border: OutlineInputBorder(), prefixIcon: Icon(Icons.badge)),
+                decoration: const InputDecoration(
+                  labelText: 'Preferred Name',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.badge),
+                ),
                 keyboardType: TextInputType.name,
-                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
+                // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
 
@@ -522,134 +659,177 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               //  ],
               // const SizedBox(height: 15),
 
+              // --- Academic Info (Optional) ---
+              const Divider(),
+              const SizedBox(height: 15),
+              Text(
+                'Academic Info (Optional)',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 15),
+              DropdownButtonFormField<String>(
+                value: _yearInSchool,
+                decoration: const InputDecoration(
+                  labelText: 'Year in School',
+                  border: OutlineInputBorder(),
+                ),
+                items:
+                    _yearOptions
+                        .map(
+                          (code) => DropdownMenuItem(
+                            value: code,
+                            child: Text(
+                              _yearMappings[code] ?? code,
+                            ), // Display label but use code as value
+                          ),
+                        )
+                        .toList(),
+                onChanged: (value) {
+                  setState(() => _yearInSchool = value);
+                  _sendDataUpdate(); // Year change only affects optional data
+                },
+              ),
+              const SizedBox(height: 15),
+              DynamicTextListInput(
+                label: 'Majors',
+                initialItems: _majors,
+                onListChanged: (updatedList) {
+                  // No need for setState here as child manages its state
+                  _majors = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
+              DynamicTextListInput(
+                label: 'Minors',
+                initialItems: _minors,
+                onListChanged: (updatedList) {
+                  _minors = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
 
-               // --- Academic Info (Optional) ---
-                const Divider(),
-                const SizedBox(height: 15),
-                Text('Academic Info (Optional)', style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: 15),
-               DropdownButtonFormField<String>(
-                 value: _yearInSchool,
-                 decoration: const InputDecoration(labelText: 'Year in School', border: OutlineInputBorder()),
-                 items: _yearOptions.map((year) => DropdownMenuItem(value: year, child: Text(year))).toList(),
-                 onChanged: (value) {
-                   setState(() => _yearInSchool = value);
-                    _sendDataUpdate(); // Year change only affects optional data
-                 },
-               ),
-               const SizedBox(height: 15),
-               DynamicTextListInput(
-                 label: 'Majors',
-                 initialItems: _majors,
-                 onListChanged: (updatedList) {
-                   // No need for setState here as child manages its state
-                   _majors = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
-               DynamicTextListInput(
-                 label: 'Minors',
-                 initialItems: _minors,
-                 onListChanged: (updatedList) {
-                   _minors = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
+              // --- Activities & Interests (Optional) ---
+              const Divider(),
+              const SizedBox(height: 15),
+              Text(
+                'Activities & Interests (Optional)',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 15),
+              DynamicTextListInput(
+                label: 'Interests',
+                initialItems: _interests,
+                onListChanged: (updatedList) {
+                  _interests = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
+              DynamicTextListInput(
+                label: 'Activities',
+                initialItems: _activities,
+                onListChanged: (updatedList) {
+                  _activities = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
 
-               // --- Activities & Interests (Optional) ---
-               const Divider(),
-               const SizedBox(height: 15),
-               Text('Activities & Interests (Optional)', style: Theme.of(context).textTheme.headlineSmall),
-               const SizedBox(height: 15),
-               DynamicTextListInput(
-                 label: 'Interests',
-                 initialItems: _interests,
-                 onListChanged: (updatedList) {
-                   _interests = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
-               DynamicTextListInput(
-                 label: 'Activities',
-                 initialItems: _activities,
-                 onListChanged: (updatedList) {
-                   _activities = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
-
-               // --- Courses (Optional) ---
-               const Divider(),
-               const SizedBox(height: 15),
-               Text('Courses (Optional)', style: Theme.of(context).textTheme.headlineSmall),
-               const SizedBox(height: 15),
-               DynamicCourseListInput(
-                 label: 'Courses Taking',
-                 initialItems: _coursesTaking,
-                 onListChanged: (updatedList) {
-                   _coursesTaking = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
-               DynamicCourseListInput(
-                 label: 'Favorite Courses',
-                 initialItems: _favoriteCourses,
-                 onListChanged: (updatedList) {
-                   _favoriteCourses = updatedList;
-                   _sendDataUpdate();
-                 },
-               ),
-
+              // --- Courses (Optional) ---
+              const Divider(),
+              const SizedBox(height: 15),
+              Text(
+                'Courses (Optional)',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 15),
+              DynamicCourseListInput(
+                label: 'Courses Taking',
+                initialItems: _coursesTaking,
+                onListChanged: (updatedList) {
+                  _coursesTaking = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
+              DynamicCourseListInput(
+                label: 'Favorite Courses',
+                initialItems: _favoriteCourses,
+                onListChanged: (updatedList) {
+                  _favoriteCourses = updatedList;
+                  _sendDataUpdate();
+                },
+              ),
 
               // --- Socials (Optional) ---
-               const Divider(),
-               const SizedBox(height: 15),
-               Text('Socials (Optional)', style: Theme.of(context).textTheme.headlineSmall),
-               const SizedBox(height: 15),
+              const Divider(),
+              const SizedBox(height: 15),
+              Text(
+                'Socials (Optional)',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 15),
               TextFormField(
                 controller: _socialsSnapchatController,
-                decoration: const InputDecoration(labelText: 'Snapchat Username', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Snapchat Username',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
               TextFormField(
                 controller: _socialsInstagramController,
-                decoration: const InputDecoration(labelText: 'Instagram Handle', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Instagram Handle',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
-               TextFormField(
+              TextFormField(
                 controller: _socialsFacebookController,
-                decoration: const InputDecoration(labelText: 'Facebook Profile URL', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Facebook Profile URL',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
-               TextFormField(
+              TextFormField(
                 controller: _socialsXController,
-                decoration: const InputDecoration(labelText: 'X (Twitter) Handle', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'X (Twitter) Handle',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
-               TextFormField(
+              TextFormField(
                 controller: _socialsDiscordController,
-                decoration: const InputDecoration(labelText: 'Discord Username', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Discord Username',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
-               TextFormField(
+              TextFormField(
                 controller: _socialsPhoneController,
-                decoration: const InputDecoration(labelText: 'Phone Number', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.phone,
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15),
-               TextFormField(
+              TextFormField(
                 controller: _socialsOtherController,
-                decoration: const InputDecoration(labelText: 'Other Social/Contact', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Other Social/Contact',
+                  border: OutlineInputBorder(),
+                ),
                 // onChanged: (_) => _sendDataUpdate(), // Use listener instead
               ),
               const SizedBox(height: 15), // Add final spacing at the bottom
-
             ],
           ),
         ),
