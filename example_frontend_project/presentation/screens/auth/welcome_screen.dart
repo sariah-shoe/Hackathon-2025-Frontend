@@ -1,17 +1,17 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'login.dart';
-import 'register.dart';
+import 'login_screen.dart';
+import 'register_screen.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({super.key});
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _LandingPageState extends State<LandingPage>
+class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -25,22 +25,21 @@ class _LandingPageState extends State<LandingPage>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
-      ),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
+    ));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
-      ),
-    );
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
+    ));
 
     _controller.forward();
   }
@@ -56,13 +55,16 @@ class _LandingPageState extends State<LandingPage>
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Theme.of(context).colorScheme.primary, Colors.black],
+            colors: [
+              Theme.of(context).colorScheme.primary,
+              Colors.black,
+            ],
           ),
         ),
         child: SafeArea(
@@ -94,15 +96,13 @@ class _LandingPageState extends State<LandingPage>
                                   builder: (context, double value, child) {
                                     return Transform.translate(
                                       offset: Offset(
-                                        0,
-                                        sin(value * 2 * 3.14159) * 4,
-                                      ),
+                                          0, sin(value * 2 * 3.14159) * 4),
                                       child: child,
                                     );
                                   },
                                   child: Image.asset(
                                     'assets/images/logo.png',
-                                    height: constraints.maxHeight * 0.35,
+                                    height: constraints.maxHeight * 0.15,
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -111,29 +111,26 @@ class _LandingPageState extends State<LandingPage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Serendipity',
+                                      'IRON',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: min(
-                                          constraints.maxWidth * 0.08,
-                                          constraints.maxHeight * 0.05,
-                                        ),
+                                            constraints.maxWidth * 0.08,
+                                            constraints.maxHeight * 0.05),
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                         letterSpacing: 2,
                                       ),
                                     ),
                                     Text(
-                                      'Engine',
+                                      'IQ',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: min(
-                                          constraints.maxWidth * 0.08,
-                                          constraints.maxHeight * 0.05,
-                                        ),
+                                            constraints.maxWidth * 0.08,
+                                            constraints.maxHeight * 0.05),
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                         letterSpacing: 2,
@@ -143,13 +140,11 @@ class _LandingPageState extends State<LandingPage>
                                 ),
                                 SizedBox(height: constraints.maxHeight * 0.02),
                                 Text(
-                                  'Branch Out, Make Connections, Meet People',
+                                  'Train Smarter,\nAchieve More,\nTransform Lives',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
-                                    fontSize: min(
-                                      constraints.maxWidth * 0.04,
-                                      constraints.maxHeight * 0.022,
-                                    ),
+                                    fontSize: min(constraints.maxWidth * 0.04,
+                                        constraints.maxHeight * 0.022),
                                     color: Colors.white.withOpacity(0.8),
                                     height: 1.3,
                                   ),
@@ -160,8 +155,7 @@ class _LandingPageState extends State<LandingPage>
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                              bottom: constraints.maxHeight * 0.04,
-                            ),
+                                bottom: constraints.maxHeight * 0.04),
                             child: Column(
                               children: [
                                 SizedBox(
@@ -172,16 +166,15 @@ class _LandingPageState extends State<LandingPage>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder:
-                                              (context) => const Register(),
+                                          builder: (context) =>
+                                              const RegisterScreen(),
                                         ),
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       foregroundColor: Colors.white,
                                       padding: EdgeInsets.symmetric(
                                         vertical: constraints.maxHeight * 0.015,
@@ -194,13 +187,12 @@ class _LandingPageState extends State<LandingPage>
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
-                                        'Register',
+                                        'GET STARTED',
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: min(
-                                            constraints.maxWidth * 0.04,
-                                            constraints.maxHeight * 0.02,
-                                          ),
+                                              constraints.maxWidth * 0.04,
+                                              constraints.maxHeight * 0.02),
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.2,
                                         ),
@@ -217,22 +209,20 @@ class _LandingPageState extends State<LandingPage>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const Login(),
+                                          builder: (context) =>
+                                              const LoginScreen(),
                                         ),
                                       );
                                     },
                                     style: OutlinedButton.styleFrom(
-                                      foregroundColor:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       side: BorderSide(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.secondary,
-                                        width: 1,
-                                      ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          width: 1),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -243,13 +233,12 @@ class _LandingPageState extends State<LandingPage>
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
-                                        'Sign in',
+                                        'ALREADY A TRAINER? SIGN IN',
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: min(
-                                            constraints.maxWidth * 0.035,
-                                            constraints.maxHeight * 0.018,
-                                          ),
+                                              constraints.maxWidth * 0.035,
+                                              constraints.maxHeight * 0.018),
                                           letterSpacing: 1,
                                         ),
                                       ),
@@ -271,4 +260,4 @@ class _LandingPageState extends State<LandingPage>
       ),
     );
   }
-}
+} 
