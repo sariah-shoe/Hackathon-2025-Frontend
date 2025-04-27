@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:serendipity_engine/presentation/screens/home/home.dart';
 import 'package:http/http.dart' as http;
 
 Future<http.Response> auth(username, password) async {
@@ -65,19 +65,23 @@ class LoginState extends State<Login> {
             Text("Password"),
             TextFormField(controller: passwordController),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async { // Make the function async
                 debugPrint(
                   "Username: ${usernameController.text} Password: ${passwordController.text}",
                 );
-                http.Response result = auth(
+                // Await the result of the auth function
+                final http.Response response = await auth(
                   usernameController.text,
                   passwordController.text,
                 );
-                debugPrint('Returned result ${result.statusCode}');
-                if (result.statusCode == 200) {
+                // Print the status code and body for debugging
+                debugPrint('Response Status Code: ${response.statusCode}');
+                debugPrint('Response Body: ${response.body}');
+                if (response.statusCode == 200) {
+                  // TODO: Parse the token from response.body and store it securely
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Home()),
+                    MaterialPageRoute(builder: (context) => Home()),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -92,8 +96,4 @@ class LoginState extends State<Login> {
       ),
     );
   }
-}
-
-extension on Future<http.Response> {
-  get statusCode => null;
 }
