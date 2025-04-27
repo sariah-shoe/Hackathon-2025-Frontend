@@ -14,7 +14,7 @@ class ApiService {
   ApiService._internal();
   
   final TokenService _tokenService = TokenService();
-  static final String baseUrl = kReleaseMode ? '' : 'http://127.0.0.1:8000/api';
+  static final String baseUrl = kReleaseMode ? '' : 'http://10.0.2.2:8000/api';
   
   // Function to refresh the token
   Future<bool> refreshToken() async {
